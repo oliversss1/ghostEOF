@@ -34,20 +34,12 @@ public class Main {
     
     
     public static void main(String[] args) {
-        
+   
+        //analycing files
         File file=new File("src/images/2.jpg");
         String archivoHex = getCodeFileHex(file);
         System.out.println(archivoHex);
-//        try(FileInputStream f2=new FileInputStream(archivo);DataInputStream dti=new DataInputStream(f2)){
-//            while(true){
-//                byte dato=dti.readByte();
-//                System.out.println(String.format("%02X ", dato));
-//            }
-//        }catch(EOFException e){                        
-//            System.out.println("El archivo a acabado de leerse");
-//        }catch (IOException e) {
-//            System.out.println("Error " + e.toString());
-//        }
+
         
     }
     
