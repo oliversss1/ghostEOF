@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class Main {
 
@@ -30,8 +32,8 @@ public class Main {
         String fileHex = getCodeFileHex(file);
         // Now we begin to show found file 
         showAnalyzedFiles(fileHex);
-    }
-    
+        System.out.println("GAME OVER");
+    }    
     //
     public static String getCodeFileHex(File file){
         String data="";
@@ -89,13 +91,13 @@ public class Main {
         dataHeader1 = getHeaders(fileHex,"FFD8FF");        
         Vector data = new Vector(dataHeader1.size());
         
-        System.out.println(dataHeader1.toString());        
+        
         
         Vector data2 = new Vector(dataHeader1.size());
         int indexData2 = 0;
         
         for(int i = 0;i < dataHeader1.size() ;i++){
-            System.out.println("s");
+            
             if(i == dataHeader1.size()-1){                
                 data2.add(dataHeader1.elementAt(i));
                 data2.add(fileHex.length());
@@ -109,9 +111,8 @@ public class Main {
     }
     //
     public static void showAnalyzedFiles(String fileHex){
-        System.out.println("entra showAnalyzedFiles");
-        Vector sizeFiles= getSizeTypeFiles(fileHex);
-        System.out.println(sizeFiles.toString());
+        
+        Vector sizeFiles = getSizeTypeFiles(fileHex);
         
         for(int i=0;i<sizeFiles.size();i=i+2){
             showFiles(i,i+1,sizeFiles,fileHex);
@@ -120,7 +121,7 @@ public class Main {
     }
     //
     public static void showFiles(int index,int close,Vector sizeFiles,String fileHex){
-        System.out.println("entra showFiles");
+        
         int indexFile = (int) sizeFiles.elementAt(index);
         int closeFile = (int) sizeFiles.elementAt(close);
         int closeFileHex = fileHex.length();
@@ -161,18 +162,25 @@ public class Main {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }        
     }
     
-    
-    
-    
-    public static void main(String[] args){
-           
-        File file=new File("src/images/res_1.jpg");
-        String imageCode = getCodeFileHex(file);
-        processFile(file);
+    public static void cutImage(String fileHex,int parts){
+        Vector subImages;
+        int sizeImage = fileHex.length();
         
     }
+    
+    
+//    public static void main(String[] args){
+//           
+//        File file=new File("src/images/res_1.jpg");
+//        String imageCode = getCodeFileHex(file);
+//        processFile(file);
+//        
+//        JFrame j = new JFrame();
+//        JPanel contentPane = new JPanel();
+//        
+//    }
     
 }
