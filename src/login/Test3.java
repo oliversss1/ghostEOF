@@ -37,7 +37,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public final class Test3 extends javax.swing.JFrame {
     
-    private File ImageSelected;
+    private File ImageSelected,ImageSelected2;
     
     public Test3() {
         initComponents();
@@ -48,12 +48,11 @@ public final class Test3 extends javax.swing.JFrame {
     public static void processFile(File file) {
         //this function process out file
 
-        // We get HexCode of our file
+        // We get HexCode from our file
         String fileHex = getCodeFileHex(file);
-        // Now we begin to show found file 
+        // Now we started to show the found files
         showAnalyzedFiles(fileHex);
     }
-
     //
     public static String getCodeFileHex(File file) {
         String data = "";
@@ -76,27 +75,30 @@ public final class Test3 extends javax.swing.JFrame {
 
         return data;
     }
-
     //
     public static Vector getHeaders(String fileHex, Vector headers) {
 
         Vector data = new Vector();
         int sizeFileHex = fileHex.length();
+        int cH = 0;
         
         for(int v = 0;v < headers.size();v++){                        
             String text = (String) headers.elementAt(v);
+            System.out.println("SCANEO nro:"+v+"-"+" para:"+text);
+            cH = 0;
             int sizeText = text.length();
             for (int i = 0; i < sizeFileHex - (sizeText - 1); i++) {
                 String subText = getSubString(i, sizeText, fileHex);
                 if (subText.equals(text)) {
                     data.add(i);
-                }
+                    cH++;                    
+                }                
             }
+            System.out.println("coincidencia encontrada :"+cH);
         }
         
         return data;
     }
-
     //
     public static String getSubString(int index, int sizeText, String fileHex) {
         String data = "";
@@ -109,13 +111,28 @@ public final class Test3 extends javax.swing.JFrame {
     }
 
     public static Vector listHeaders(){
+        
         Vector listHeader = new Vector();
-        listHeader.add("FFD8FF");
-        listHeader.add("255044");  
-        listHeader.add("494433");
+        listHeader.add("FFD8FF");   //jpg
+        listHeader.add("25504446"); //pdf
+        listHeader.add("494433");   //mp3        
+        listHeader.add("52617221"); //rar
+        listHeader.add("D0CF11E0"); //doc        
+        
         return listHeader;
     }
     
+    public static Vector listHeaders2(){
+        
+        Vector listHeader = new Vector();
+        listHeader.add("FFD8FF,jpg");    //jpg        
+        listHeader.add("25504446,pdf");  //pdf
+        listHeader.add("494433,mp3");    //mp3        
+        listHeader.add("52617221,rar");  //rar
+        listHeader.add("D0CF11E0,doc");  //doc        
+        
+        return listHeader;
+    }    
     //
     public static Vector getSizeTypeFiles(String fileHex) {
 
@@ -123,15 +140,14 @@ public final class Test3 extends javax.swing.JFrame {
         
         dataHeader1 = getHeaders(fileHex,listHeaders());
         
-        Vector data = new Vector(dataHeader1.size());
-
-        System.out.println(dataHeader1.toString());
-
+        System.out.println("UBICACION DE CABECERAS - INDICES");
+        System.out.println(dataHeader1);
+            
         Vector data2 = new Vector(dataHeader1.size());
         int indexData2 = 0;
 
         for (int i = 0; i < dataHeader1.size(); i++) {
-            System.out.println("s");
+            
             if (i == dataHeader1.size() - 1) {
                 data2.add(dataHeader1.elementAt(i));
                 data2.add(fileHex.length());
@@ -150,19 +166,19 @@ public final class Test3 extends javax.swing.JFrame {
         merge.addAll(Vb);
         return merge;
     }
-    
     //
     public static void showAnalyzedFiles(String fileHex) {
         
         Vector sizeFiles = getSizeTypeFiles(fileHex);
-        System.out.println(sizeFiles.toString());
+        System.out.println("DETERMINANDO CUERPO DE OBJETOS EXTRAÑOS");
+        System.out.println(sizeFiles);
 
         for (int i = 0; i < sizeFiles.size(); i = i + 2) {
+            System.out.println("armando el contenido del objeto :"+(i+1) );
             showFiles(i, i + 1, sizeFiles, fileHex);
         }
-
+        
     }
-
     //
     public static void showFiles(int index, int close, Vector sizeFiles, String fileHex) {
         
@@ -181,7 +197,6 @@ public final class Test3 extends javax.swing.JFrame {
         int accumulator = (close + 1) / 2;
         buildNewFiles(imageCode, accumulator);
     }
-
     //
     public static void buildNewFiles(String imageCode, int accumulator) {
 
@@ -216,7 +231,8 @@ public final class Test3 extends javax.swing.JFrame {
         }
 
         try (
-            FileOutputStream fos = new FileOutputStream(userDir +"/Desktop/imagesResultGhost/image" + accumulator + typeFile)) {
+                FileOutputStream fos = new FileOutputStream(userDir +"/Desktop/imagesResultGhost/image" + accumulator + typeFile)
+            ){
             fos.write(arr);
             fos.flush();
         } catch (FileNotFoundException ex) {
@@ -238,7 +254,9 @@ public final class Test3 extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanelResultado = new javax.swing.JPanel();
         jLabelA = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jLabelA1 = new javax.swing.JLabel();
+        jButtonCargaImagen1 = new javax.swing.JButton();
+        jButtonProcesaImagen1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -292,65 +310,99 @@ public final class Test3 extends javax.swing.JFrame {
         jLabelA.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(173, 94, 15)));
         jLabelA.setOpaque(true);
 
-        jTextField1.setText("jTextField1");
-        jTextField1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(173, 94, 15)));
+        jLabelA1.setBackground(new java.awt.Color(255, 153, 51));
+        jLabelA1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(173, 94, 15)));
+        jLabelA1.setOpaque(true);
+
+        jButtonCargaImagen1.setFont(new java.awt.Font("Century Gothic", 0, 18)); // NOI18N
+        jButtonCargaImagen1.setForeground(new java.awt.Color(173, 94, 15));
+        jButtonCargaImagen1.setText("CARGAR IMAGEN-2");
+        jButtonCargaImagen1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(173, 94, 15)));
+        jButtonCargaImagen1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCargaImagen1ActionPerformed(evt);
+            }
+        });
+
+        jButtonProcesaImagen1.setFont(new java.awt.Font("Century Gothic", 0, 18)); // NOI18N
+        jButtonProcesaImagen1.setForeground(new java.awt.Color(173, 94, 15));
+        jButtonProcesaImagen1.setText("OCULTAR");
+        jButtonProcesaImagen1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(173, 94, 15)));
+        jButtonProcesaImagen1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonProcesaImagen1MouseClicked(evt);
+            }
+        });
+        jButtonProcesaImagen1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProcesaImagen1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelContentPaneLayout = new javax.swing.GroupLayout(jPanelContentPane);
         jPanelContentPane.setLayout(jPanelContentPaneLayout);
         jPanelContentPaneLayout.setHorizontalGroup(
             jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelContentPaneLayout.createSequentialGroup()
-                .addGap(277, 277, 277)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContentPaneLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(193, 193, 193))
+            .addGroup(jPanelContentPaneLayout.createSequentialGroup()
                 .addGap(43, 43, 43)
-                .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 904, Short.MAX_VALUE)
+                .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 625, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanelContentPaneLayout.createSequentialGroup()
-                        .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButtonCargaImagen, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
-                            .addComponent(jLabelA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jProgressBarCargaImagen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonProcesaImagen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(25, 25, 25))
+                            .addGroup(jPanelContentPaneLayout.createSequentialGroup()
+                                .addComponent(jLabelA, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jProgressBarCargaImagen, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                                    .addComponent(jButtonProcesaImagen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButtonProcesaImagen1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jButtonCargaImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(40, 40, 40)
+                        .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabelA1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonCargaImagen1, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         jPanelContentPaneLayout.setVerticalGroup(
             jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelContentPaneLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addGap(13, 13, 13)
                 .addComponent(jLabel1)
-                .addGap(29, 29, 29)
-                .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonCargaImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonCargaImagen1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanelContentPaneLayout.createSequentialGroup()
-                        .addGap(97, 97, 97)
+                        .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabelA, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelA1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18))
+                    .addGroup(jPanelContentPaneLayout.createSequentialGroup()
+                        .addComponent(jButtonProcesaImagen1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonProcesaImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jProgressBarCargaImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanelContentPaneLayout.createSequentialGroup()
-                        .addComponent(jButtonCargaImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanelContentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField1)
-                            .addComponent(jLabelA, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE))))
-                .addGap(27, 27, 27)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                        .addComponent(jProgressBarCargaImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelContentPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelContentPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelContentPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelContentPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -387,24 +439,20 @@ public final class Test3 extends javax.swing.JFrame {
         jPanelResultado.repaint();
         
         String userDir = System.getProperty("user.home");
-        File direc = new File(userDir +"/Desktop/imagesResultGhost"); 
-        direc.mkdir(); 
+        File direc = new File(userDir +"/Desktop/imagesResultGhost");         
+        direc.mkdir();         
                 
         long startTime = System.currentTimeMillis();
-        //processFile(ImageSelected);
-        String fileHex = getCodeFileHex(ImageSelected);
+        
+        processFile(ImageSelected);
+        
         long endTime = System.currentTimeMillis()-startTime;
         System.out.println("FIN:"+endTime);
         
         int secTime = (int) endTime/1000;
         
-        String a = "FFD8FF";        
-        int intIndex = fileHex.indexOf(a);
-        
         System.out.println("fin:"+secTime);
-        System.out.println("FileHex:"+fileHex);
-        System.out.println("cadena:"+intIndex);
-        /*
+        
         jProgressBarCargaImagen.setMinimum(0);
         jProgressBarCargaImagen.setMaximum(secTime-1);
         
@@ -420,20 +468,60 @@ public final class Test3 extends javax.swing.JFrame {
              }
         }
                 
-        //ListImages();
-        */
+        ListImages();
+        
     }//GEN-LAST:event_jButtonProcesaImagenActionPerformed
     
     private void jButtonProcesaImagenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonProcesaImagenMouseClicked
         
     }//GEN-LAST:event_jButtonProcesaImagenMouseClicked
+
+    private void jButtonCargaImagen1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCargaImagen1ActionPerformed
+        String userDir = System.getProperty("user.home");
+        JFileChooser file = new JFileChooser(userDir +"/Desktop");        
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG","jpg");        
+        file.setFileSelectionMode(JFileChooser.FILES_ONLY);                
+        file.setFileFilter(filter);
+        file.setMultiSelectionEnabled(false);
+        
+        int val = file.showOpenDialog(this);
+        
+        if( val == JFileChooser.APPROVE_OPTION){
+            ImageSelected2 = file.getSelectedFile();        
+            ImageIcon img = new ImageIcon(ImageSelected2.toString());                
+            Icon icon = new ImageIcon(img.getImage().getScaledInstance(jLabelA1.getWidth(),jLabelA1.getHeight(), Image.SCALE_DEFAULT));        
+            jLabelA1.setIcon(icon);      
+        }else{
+            System.out.println("NO SELECCIONO NINGUNA IMAGEN");
+        }
+    }//GEN-LAST:event_jButtonCargaImagen1ActionPerformed
+
+    private void jButtonProcesaImagen1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonProcesaImagen1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonProcesaImagen1MouseClicked
+
+    private void jButtonProcesaImagen1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProcesaImagen1ActionPerformed
+
+        String userDir = System.getProperty("user.home");
+        File direc = new File(userDir +"/Desktop/imagesResultGhost");         
+        direc.mkdir();         
+        
+        String f1 = getCodeFileHex(ImageSelected);
+        String f2 = getCodeFileHex(ImageSelected2);
+        String res = f1+f2;
+        
+        buildNewFiles(res,0000);        
+    }//GEN-LAST:event_jButtonProcesaImagen1ActionPerformed
     
     private void ListImages(){
         String userDir = System.getProperty("user.home");
         String sDirectorio = userDir +"/Desktop/imagesResultGhost";
-        File f = new File(sDirectorio);
-        if (f.exists()) {
-            File[] ficheros = f.listFiles();
+               
+        File f = new File(sDirectorio);        
+        File[] ficheros;
+        
+        if ( f.exists() ) {
+            ficheros = f.listFiles();
             for (int x = 0; x < ficheros.length; x++) {
                 
                 System.out.println(ficheros[x].getName());
@@ -504,14 +592,16 @@ public final class Test3 extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCargaImagen;
+    private javax.swing.JButton jButtonCargaImagen1;
     private javax.swing.JButton jButtonProcesaImagen;
+    private javax.swing.JButton jButtonProcesaImagen1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelA;
+    private javax.swing.JLabel jLabelA1;
     private javax.swing.JPanel jPanelContentPane;
     private javax.swing.JPanel jPanelResultado;
     private javax.swing.JProgressBar jProgressBarCargaImagen;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
 
