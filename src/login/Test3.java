@@ -5,10 +5,9 @@
  */
 package login;
 
-import java.awt.Color;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -17,18 +16,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Vector;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -38,6 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public final class Test3 extends javax.swing.JFrame {
     
     private File ImageSelected,ImageSelected2;
+    private int num = 0;
     
     public Test3() {
         initComponents();
@@ -109,7 +106,7 @@ public final class Test3 extends javax.swing.JFrame {
 
         return data;
     }
-
+    //
     public static Vector listHeaders(){
         
         Vector listHeader = new Vector();
@@ -121,7 +118,7 @@ public final class Test3 extends javax.swing.JFrame {
         
         return listHeader;
     }
-    
+    //
     public static Vector listHeaders2(){
         
         Vector listHeader = new Vector();
@@ -159,7 +156,7 @@ public final class Test3 extends javax.swing.JFrame {
 
         return data2;
     }
-
+    //
     public static Vector function_that_takes_a_b_merges(Vector Va, Vector Vb) {
         Vector merge = new Vector();
         merge.addAll(Va);
@@ -451,23 +448,68 @@ public final class Test3 extends javax.swing.JFrame {
         
         int secTime = (int) endTime/1000;
         
+        int n = 0;
+        
         System.out.println("fin:"+secTime);
         
+        final Thread t;
+        
+        t = new Thread(new Runnable() {
+            //Implementamos el método run()
+            @Override
+            public void run() {
+                //Permite mostrar el valor del progreso
+                jProgressBarCargaImagen.setStringPainted(true);
+                int x = 1;
+                //Utilizamos un while para emular el valor mínimo y máximo
+                //En este caso 0 - 100
+                while(x <= 100){
+                    //Asignamos valor a nuestro JProgressBar por cada siclo del bucle
+                    jProgressBarCargaImagen.setValue(x);                    
+                    //Hacemos una parada de medio segundo por cada siclo while
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                    }
+                    //Se incrementa el valor de x
+                    x++;
+                }
+                jProgressBarCargaImagen.setString("Termino de procesar el archivo");
+            }
+        });
+        //Se ejecuta el Thread
+        t.start();
+        
+        /*
         jProgressBarCargaImagen.setMinimum(0);
         jProgressBarCargaImagen.setMaximum(secTime-1);
+        jProgressBarCargaImagen.setStringPainted(true);
+               
         
-                
+        while(n <= 100){
+            jProgressBarCargaImagen.setValue(n);
+            
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+            }
+            
+            n = n+10;
+        }
+        
+        /*
         for(int i=0;i<secTime;i++){            
             try{
                  System.out.println(i+"%");
                  jProgressBarCargaImagen.setValue(i);
-                 jProgressBarCargaImagen.setStringPainted(true);
+                 
+                 //jProgressBarCargaImagen.up
                  Thread.sleep(150);
                  //java.lang.Thread.sleep(5000);
              }catch(Exception e){
              }
         }
-                
+        */      
         ListImages();
         
     }//GEN-LAST:event_jButtonProcesaImagenActionPerformed
@@ -557,6 +599,8 @@ public final class Test3 extends javax.swing.JFrame {
             super.paintComponent(grafico);
         }
     }
+    
+   
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
